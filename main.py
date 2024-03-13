@@ -15,9 +15,10 @@ import json
 import os
 import ttkthemes
 import tkinter.ttk as ttk
+import markdown
 
 
-def send_mail(username, password, to_emails, subject, body):
+def send_mail(username, password, to_emails, cc_emails, subject, body):
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
     server.login(username, password)
@@ -26,9 +27,13 @@ def send_mail(username, password, to_emails, subject, body):
     msg['From'] = username
     msg['To'] = ', '.join(to_emails)
     msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'plain'))
 
-    server.sendmail(username, to_emails, msg.as_string())
+    # Convert Markdown to HTML
+    html_body = markdown.markdown(body)
+    msg.attach(MIMEText(html_body, 'html'))
+
+    all_recipients = to_emails + cc_emails
+    server.sendmail(username, all_recipients, msg.as_string())
     server.quit()
 
 
@@ -36,11 +41,12 @@ def submit_form():
     username = username_entry.get()
     password = password_entry.get()
     to_emails = [email.strip() for email in to_email_entry.get().split(',')]
+    cc_emails = []  # Add your BCC emails here
     subject = subject_entry.get()
     body = body_entry.get("1.0", "end-1c")
 
     try:
-        send_mail(username, password, to_emails, subject, body)
+        send_mail(username, password, to_emails, cc_emails, subject, body)
         messagebox.showinfo("Success", "Email sent successfully")
         if save_credentials_var.get():
             save_credentials(username, password)
