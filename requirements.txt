@@ -1,0 +1,4 @@
+pillow==10.2.0
+setuptools==68.2.2
+ttkthemes==3.2.2
+wheel==0.41.2
