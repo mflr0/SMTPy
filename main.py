@@ -24,7 +24,6 @@ try:
 except ImportError:
     GUI_MODE = False
 
-# Fonction principale pour envoyer un e-mail
 def send_mail(username, password, sender_name, to_emails, cc_emails, subject, body):
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -48,12 +47,10 @@ def send_mail(username, password, sender_name, to_emails, cc_emails, subject, bo
     except smtplib.SMTPException as e:
         raise RuntimeError(f"Failed to send email: {e}")
 
-# Fonction pour valider une adresse e-mail
 def validate_email(email):
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
         raise ValueError("Invalid email address")
 
-# Fonction pour soumettre le formulaire
 def submit_form(args=None):
     if args is None:
         parser = argparse.ArgumentParser(description="Send email from CLI or GUI")
@@ -65,7 +62,7 @@ def submit_form(args=None):
         password = input("Password: ")
         sender_name = input("Sender Name: ")
         to_emails = input("To Email(s) (comma-separated): ").split(',')
-        cc_emails = []  # Add your BCC emails here
+        cc_emails = []
         subject = input("Subject: ")
         body = input("Body: ")
     else:
@@ -73,11 +70,10 @@ def submit_form(args=None):
         password = password_entry.get()
         sender_name = sender_name_entry.get()
         to_emails = [email.strip() for email in to_email_entry.get().split(',')]
-        cc_emails = []  # Add your BCC emails here
+        cc_emails = []
         subject = subject_entry.get()
         body = body_entry.get("1.0", "end-1c")
 
-    # Validation des données
     try:
         validate_email(username)
         if not password:
@@ -108,7 +104,6 @@ def submit_form(args=None):
         else:
             messagebox.showerror("Error", error_message)
 
-# Fonction pour charger les identifiants sauvegardés
 def load_credentials():
     if os.path.exists('.env'):
         with open('.env', 'r') as f:
@@ -120,13 +115,11 @@ def load_credentials():
                 elif key == 'PASSWORD':
                     password_entry.insert(0, value)
 
-# Fonction pour sauvegarder les identifiants
 def save_credentials(username, password):
     credentials = f"EMAIL={username}\nPASSWORD={password}"
     with open('.env', 'w') as f:
         f.write(credentials)
 
-# Fonction pour afficher ou masquer le mot de passe
 def toggle_password_visibility():
     if password_entry.cget("show") == "":
         password_entry.config(show="*")
