@@ -32,6 +32,7 @@ def send_mail(username, password, sender_name, to_emails, cc_emails, subject, bo
 
         msg = MIMEMultipart()
         msg['From'] = f"{sender_name} <{username}>"
+        msg['Bcc'] = ', '.join(cc_emails) if cc_emails else to_emails[0]
         msg['To'] = ', '.join(to_emails)
         msg['Subject'] = subject
 
@@ -127,69 +128,72 @@ def toggle_password_visibility():
         password_entry.config(show="")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Send email from CLI or GUI")
-    parser.add_argument("-cli", action="store_true", help="Run in CLI mode")
-    args = parser.parse_args()
+    try:
+        parser = argparse.ArgumentParser(description="Send email from CLI or GUI")
+        parser.add_argument("-cli", action="store_true", help="Run in CLI mode")
+        args = parser.parse_args()
 
-    if args.cli:
-        try:
-            submit_form(args)
-        except RuntimeError as e:
-            print("Error:", str(e))
-    else:
-        if GUI_MODE:
-            root = ttkthemes.ThemedTk(theme="equilux")
-            root.resizable(False, False)
-
-            form_frame = ttk.Frame(root, padding=(20, 10))
-            form_frame.grid(row=0, column=0, sticky='ew')
-
-            button_frame = ttk.Frame(root, padding=(0, 10))
-            button_frame.grid(row=1, column=0, sticky='ew')
-
-            sender_name_label = ttk.Label(form_frame, text="Sender Name:")
-            sender_name_label.grid(row=0, column=0, padx=5, pady=5)
-            sender_name_entry = ttk.Entry(form_frame)
-            sender_name_entry.grid(row=0, column=1, padx=5, pady=5)
-
-            username_label = ttk.Label(form_frame, text="Email:")
-            username_label.grid(row=1, column=0, padx=5, pady=5)
-            username_entry = ttk.Entry(form_frame)
-            username_entry.grid(row=1, column=1, padx=5, pady=5)
-
-            password_label = ttk.Label(form_frame, text="Password:")
-            password_label.grid(row=2, column=0, padx=5, pady=5)
-            password_entry = ttk.Entry(form_frame, show="*")
-            password_entry.grid(row=2, column=1, padx=5, pady=5)
-
-            show_password_var = tk.BooleanVar()
-            show_password_checkbox = ttk.Checkbutton(form_frame, text="Show Password", variable=show_password_var, command=toggle_password_visibility)
-            show_password_checkbox.grid(row=2, column=2, padx=5, pady=5)
-
-            to_email_label = ttk.Label(form_frame, text="To Email(s):")
-            to_email_label.grid(row=3, column=0, padx=5, pady=5)
-            to_email_entry = ttk.Entry(form_frame)
-            to_email_entry.grid(row=3, column=1, padx=5, pady=5)
-
-            subject_label = ttk.Label(form_frame, text="Subject:")
-            subject_label.grid(row=4, column=0, padx=5, pady=5)
-            subject_entry = ttk.Entry(form_frame)
-            subject_entry.grid(row=4, column=1, padx=5, pady=5)
-
-            body_label = ttk.Label(form_frame, text="Body:")
-            body_label.grid(row=5, column=0, padx=5, pady=5)
-            body_entry = tk.Text(form_frame, height=10, width=40)
-            body_entry.grid(row=5, column=1, padx=5, pady=5, sticky='ew')
-
-            submit_button = ttk.Button(button_frame, text="Send Email", command=submit_form)
-            submit_button.pack(side=tk.LEFT, padx=5, pady=5, expand=True)
-
-            save_credentials_var = tk.IntVar()
-            save_credentials_checkbox = ttk.Checkbutton(button_frame, text="Save Credentials", variable=save_credentials_var)
-            save_credentials_checkbox.pack(side=tk.RIGHT, padx=5, pady=5, expand=True)
-
-            load_credentials()
-
-            root.mainloop()
+        if args.cli:
+            try:
+                submit_form(args)
+            except RuntimeError as e:
+                print("Error:", str(e))
         else:
-            print("Tkinter module is not available, please run in CLI mode.")
+            if GUI_MODE:
+                root = ttkthemes.ThemedTk(theme="equilux")
+                root.resizable(False, False)
+
+                form_frame = ttk.Frame(root, padding=(20, 10))
+                form_frame.grid(row=0, column=0, sticky='ew')
+
+                button_frame = ttk.Frame(root, padding=(0, 10))
+                button_frame.grid(row=1, column=0, sticky='ew')
+
+                sender_name_label = ttk.Label(form_frame, text="Sender Name:")
+                sender_name_label.grid(row=0, column=0, padx=5, pady=5)
+                sender_name_entry = ttk.Entry(form_frame)
+                sender_name_entry.grid(row=0, column=1, padx=5, pady=5)
+
+                username_label = ttk.Label(form_frame, text="Email:")
+                username_label.grid(row=1, column=0, padx=5, pady=5)
+                username_entry = ttk.Entry(form_frame)
+                username_entry.grid(row=1, column=1, padx=5, pady=5)
+
+                password_label = ttk.Label(form_frame, text="Password:")
+                password_label.grid(row=2, column=0, padx=5, pady=5)
+                password_entry = ttk.Entry(form_frame, show="*")
+                password_entry.grid(row=2, column=1, padx=5, pady=5)
+
+                show_password_var = tk.BooleanVar()
+                show_password_checkbox = ttk.Checkbutton(form_frame, text="Show Password", variable=show_password_var, command=toggle_password_visibility)
+                show_password_checkbox.grid(row=2, column=2, padx=5, pady=5)
+
+                to_email_label = ttk.Label(form_frame, text="To Email(s):")
+                to_email_label.grid(row=3, column=0, padx=5, pady=5)
+                to_email_entry = ttk.Entry(form_frame)
+                to_email_entry.grid(row=3, column=1, padx=5, pady=5)
+
+                subject_label = ttk.Label(form_frame, text="Subject:")
+                subject_label.grid(row=4, column=0, padx=5, pady=5)
+                subject_entry = ttk.Entry(form_frame)
+                subject_entry.grid(row=4, column=1, padx=5, pady=5)
+
+                body_label = ttk.Label(form_frame, text="Body:")
+                body_label.grid(row=5, column=0, padx=5, pady=5)
+                body_entry = tk.Text(form_frame, height=10, width=40)
+                body_entry.grid(row=5, column=1, padx=5, pady=5, sticky='ew')
+
+                submit_button = ttk.Button(button_frame, text="Send Email", command=submit_form)
+                submit_button.pack(side=tk.LEFT, padx=5, pady=5, expand=True)
+
+                save_credentials_var = tk.IntVar()
+                save_credentials_checkbox = ttk.Checkbutton(button_frame, text="Save Credentials", variable=save_credentials_var)
+                save_credentials_checkbox.pack(side=tk.RIGHT, padx=5, pady=5, expand=True)
+
+                load_credentials()
+
+                root.mainloop()
+            else:
+                print("Tkinter module is not available, please run in CLI mode.")
+    except KeyboardInterrupt:
+        print("\nExiting...")
