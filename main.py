@@ -14,6 +14,7 @@ import json
 import os
 import markdown
 import re
+import tkinter.filedialog as filedialog
 
 try:
     import tkinter as tk
@@ -30,18 +31,18 @@ def send_mail(username, password, sender_name, to_emails, cc_emails, subject, bo
         server.starttls()
         server.login(username, password)
 
-        msg = MIMEMultipart()
-        msg['From'] = f"{sender_name} <{username}>"
-        msg['Bcc'] = ', '.join(cc_emails) if cc_emails else to_emails[0]
-        msg['To'] = ', '.join(to_emails)
-        msg['Subject'] = subject
+        for email in to_emails:
+            msg = MIMEMultipart()
+            msg['From'] = f"{sender_name} <{username}>"
+            msg['To'] = email
+            msg['Subject'] = subject
 
-        # Convert Markdown to HTML
-        html_body = markdown.markdown(body)
-        msg.attach(MIMEText(html_body, 'html'))
+            # Convert Markdown to HTML
+            html_body = markdown.markdown(body)
+            msg.attach(MIMEText(html_body, 'html'))
 
-        all_recipients = to_emails + cc_emails
-        server.sendmail(username, all_recipients, msg.as_string())
+            server.sendmail(username, email, msg.as_string())
+
         server.quit()
     except smtplib.SMTPAuthenticationError:
         raise RuntimeError("Authentication failed. Please check your username and password.")
@@ -115,6 +116,12 @@ def load_credentials():
                     username_entry.insert(0, value)
                 elif key == 'PASSWORD':
                     password_entry.insert(0, value)
+        save_credentials_var.set(1)
+
+def on_closing():
+    if not save_credentials_var.get() and os.path.exists('.env'):
+        os.remove('.env')
+    root.destroy()
 
 def save_credentials(username, password):
     credentials = f"EMAIL={username}\nPASSWORD={password}"
@@ -126,6 +133,15 @@ def toggle_password_visibility():
         password_entry.config(show="*")
     else:
         password_entry.config(show="")
+
+def load_email_list():
+    email_list_file = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
+    if email_list_file:
+        with open(email_list_file, 'r') as f:
+            lines = f.readlines()
+            emails = [email.strip() for line in lines for email in line.split(',')]
+            to_email_entry.delete(0, tk.END)
+            to_email_entry.insert(0, ', '.join(emails))
 
 if __name__ == "__main__":
     try:
@@ -190,9 +206,14 @@ if __name__ == "__main__":
                 save_credentials_checkbox = ttk.Checkbutton(button_frame, text="Save Credentials", variable=save_credentials_var)
                 save_credentials_checkbox.pack(side=tk.RIGHT, padx=5, pady=5, expand=True)
 
+                load_email_list_button = ttk.Button(button_frame, text="Load Email List", command=load_email_list)
+                load_email_list_button.pack(side=tk.LEFT, padx=5, pady=5, expand=True)
+
                 load_credentials()
 
                 root.mainloop()
+                root.protocol("WM_DELETE_WINDOW", on_closing)
+                
             else:
                 print("Tkinter module is not available, please run in CLI mode.")
     except KeyboardInterrupt:
