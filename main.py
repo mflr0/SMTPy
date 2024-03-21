@@ -143,6 +143,14 @@ def load_email_list():
             to_email_entry.delete(0, tk.END)
             to_email_entry.insert(0, ', '.join(emails))
 
+def load_file_content():
+    file_path = filedialog.askopenfilename(filetypes=[("HTML files", "*.html"), ("Text files", "*.txt"), ("Markdown files", "*.md")])
+    if file_path:
+        with open(file_path, 'r') as f:
+            content = f.read()
+            body_entry.delete("1.0", "end-1c")
+            body_entry.insert("1.0", content)
+
 if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser(description="Send email from CLI or GUI")
@@ -209,11 +217,13 @@ if __name__ == "__main__":
                 load_email_list_button = ttk.Button(button_frame, text="Load Email List", command=load_email_list)
                 load_email_list_button.pack(side=tk.LEFT, padx=5, pady=5, expand=True)
 
+                load_file_button = ttk.Button(button_frame, text="Load File", command=load_file_content)
+                load_file_button.pack(side=tk.LEFT, padx=5, pady=5, expand=True)
+
                 load_credentials()
 
                 root.mainloop()
                 root.protocol("WM_DELETE_WINDOW", on_closing)
-                
             else:
                 print("Tkinter module is not available, please run in CLI mode.")
     except KeyboardInterrupt:
