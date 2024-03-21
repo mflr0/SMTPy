@@ -1,6 +1,6 @@
 ##
 ##  main.py
-##  Python-SMTP
+##  SNMPy
 ##
 ##  Created by 0xGuigui on 13/03/2024.
 ##  Contributor(s): 0xGuigui
