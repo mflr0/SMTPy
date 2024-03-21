@@ -25,6 +25,9 @@ try:
 except ImportError:
     GUI_MODE = False
 
+saved_username = None
+saved_password = None
+
 def send_mail(username, password, sender_name, to_emails, cc_emails, subject, body):
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -60,8 +63,9 @@ def submit_form(args=None):
         args = parser.parse_args()
 
     if args.cli:
-        username = input("Email: ")
-        password = input("Password: ")
+        load_credentials()
+        username = input("Email [press ENTER to use saved credentials]: ") or saved_username
+        password = input("Password [press ENTER to use saved credentials]: ") or saved_password
         sender_name = input("Sender Name: ")
         to_emails = input("To Email(s) (comma-separated): ").split(',')
         cc_emails = []
@@ -107,16 +111,16 @@ def submit_form(args=None):
             messagebox.showerror("Error", error_message)
 
 def load_credentials():
+    global saved_username, saved_password
     if os.path.exists('.env'):
         with open('.env', 'r') as f:
             lines = f.readlines()
             for line in lines:
                 key, value = line.strip().split('=')
                 if key == 'EMAIL':
-                    username_entry.insert(0, value)
+                    saved_username = value
                 elif key == 'PASSWORD':
-                    password_entry.insert(0, value)
-        save_credentials_var.set(1)
+                    saved_password = value
 
 def on_closing():
     if not save_credentials_var.get() and os.path.exists('.env'):
