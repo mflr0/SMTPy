@@ -111,7 +111,7 @@ def submit_form(args=None):
             messagebox.showerror("Error", error_message)
 
 def load_credentials():
-    global saved_username, saved_password
+    global saved_username, saved_password, username_entry, password_entry
     if os.path.exists('.env'):
         with open('.env', 'r') as f:
             lines = f.readlines()
@@ -119,8 +119,12 @@ def load_credentials():
                 key, value = line.strip().split('=')
                 if key == 'EMAIL':
                     saved_username = value
+                    if GUI_MODE:
+                        username_entry.insert(0, value)
                 elif key == 'PASSWORD':
                     saved_password = value
+                    if GUI_MODE:
+                        password_entry.insert(0, value)
 
 def on_closing():
     if not save_credentials_var.get() and os.path.exists('.env'):
@@ -226,8 +230,8 @@ if __name__ == "__main__":
 
                 load_credentials()
 
+                root.protocol("WM_DELETE_WINDOW", on_closing)  # Move this line before root.mainloop()
                 root.mainloop()
-                root.protocol("WM_DELETE_WINDOW", on_closing)
             else:
                 print("Tkinter module is not available, please run in CLI mode.")
     except KeyboardInterrupt:
