@@ -174,6 +174,7 @@ if __name__ == "__main__":
             if GUI_MODE:
                 root = ttkthemes.ThemedTk(theme="equilux")
                 root.resizable(False, False)
+                root.title("SNMPy")
 
                 form_frame = ttk.Frame(root, padding=(20, 10))
                 form_frame.grid(row=0, column=0, sticky='ew')
