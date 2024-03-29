@@ -28,9 +28,9 @@ except ImportError:
 saved_username = None
 saved_password = None
 
-def send_mail(username, password, sender_name, to_emails, cc_emails, subject, body):
+def send_mail(server, port, username, password, sender_name, to_emails, cc_emails, subject, body):
     try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server = smtplib.SMTP(server, port)
         server.starttls()
         server.login(username, password)
 
@@ -64,6 +64,8 @@ def submit_form(args=None):
 
     if args.cli:
         load_credentials()
+        server = input("Server [press ENTER to use saved credentials]: ") or saved_server
+        port = int(input("Port [press ENTER to use saved credentials]: ") or saved_port)
         username = input("Email [press ENTER to use saved credentials]: ") or saved_username
         password = input("Password [press ENTER to use saved credentials]: ") or saved_password
         sender_name = input("Sender Name: ")
@@ -72,6 +74,8 @@ def submit_form(args=None):
         subject = input("Subject: ")
         body = input("Body: ")
     else:
+        server = server_entry.get()
+        port = int(port_entry.get())
         username = username_entry.get()
         password = password_entry.get()
         sender_name = sender_name_entry.get()
@@ -95,14 +99,14 @@ def submit_form(args=None):
         return
 
     try:
-        send_mail(username, password, sender_name, to_emails, cc_emails, subject, body)
+        send_mail(server, port, username, password, sender_name, to_emails, cc_emails, subject, body)
         success_message = "Email sent successfully"
         if args.cli:
             print(success_message)
         else:
             messagebox.showinfo("Success", success_message)
             if save_credentials_var.get():
-                save_credentials(username, password)
+                save_credentials(server, port, username, password)
     except Exception as e:
         error_message = f"An error occurred: {e}"
         if args.cli:
@@ -111,13 +115,21 @@ def submit_form(args=None):
             messagebox.showerror("Error", error_message)
 
 def load_credentials():
-    global saved_username, saved_password, username_entry, password_entry
+    global saved_server, saved_port, saved_username, saved_password, server_entry, port_entry, username_entry, password_entry
     if os.path.exists('.env'):
         with open('.env', 'r') as f:
             lines = f.readlines()
             for line in lines:
                 key, value = line.strip().split('=')
-                if key == 'EMAIL':
+                if key == 'SERVER':
+                    saved_server = value
+                    if GUI_MODE:
+                        server_entry.insert(0, value)
+                elif key == 'PORT':
+                    saved_port = int(value)
+                    if GUI_MODE:
+                        port_entry.insert(0, value)
+                elif key == 'EMAIL':
                     saved_username = value
                     if GUI_MODE:
                         username_entry.insert(0, value)
@@ -131,8 +143,8 @@ def on_closing():
         os.remove('.env')
     root.destroy()
 
-def save_credentials(username, password):
-    credentials = f"EMAIL={username}\nPASSWORD={password}"
+def save_credentials(server, port, username, password):
+    credentials = f"SERVER={server}\nPORT={port}\nEMAIL={username}\nPASSWORD={password}"
     with open('.env', 'w') as f:
         f.write(credentials)
 
@@ -159,6 +171,28 @@ def load_file_content():
             body_entry.delete("1.0", "end-1c")
             body_entry.insert("1.0", content)
 
+def on_server_selected(event):
+    if server_combo.get() == "Custom":
+        server_label.grid(row=1, column=0, padx=5, pady=5)
+        server_entry.grid(row=1, column=1, padx=5, pady=5)
+        port_label.grid(row=2, column=0, padx=5, pady=5)
+        port_entry.grid(row=2, column=1, padx=5, pady=5)
+    else:
+        server_label.grid_remove()
+        server_entry.grid_remove()
+        port_label.grid_remove()
+        port_entry.grid_remove()
+        server = SERVER_PORT_MAPPING[server_combo.get()]["server"]
+        port = SERVER_PORT_MAPPING[server_combo.get()]["port"]
+        server_entry.insert(0, server)
+        port_entry.insert(0, port)
+
+SERVER_PORT_MAPPING = {
+    "Google": {"server": "smtp.gmail.com", "port": 587},
+    "Yahoo": {"server": "smtp.mail.yahoo.com", "port": 465},
+    "Microsoft": {"server": "smtp.office365.com", "port": 587},
+}
+
 if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser(description="Send email from CLI or GUI")
@@ -182,39 +216,51 @@ if __name__ == "__main__":
                 button_frame = ttk.Frame(root, padding=(0, 10))
                 button_frame.grid(row=1, column=0, sticky='ew')
 
+                server_label = ttk.Label(form_frame, text="Server:")
+                server_label = ttk.Label(form_frame, text="Server:")
+                server_label.grid(row=0, column=0, padx=5, pady=5)
+                server_combo = ttk.Combobox(form_frame, values=list(SERVER_PORT_MAPPING.keys()) + ["Custom"], state="readonly")
+                server_combo.grid(row=0, column=1, padx=5, pady=5)
+                server_combo.bind("<<ComboboxSelected>>", on_server_selected)
+
+                server_entry = ttk.Entry(form_frame)
+                port_entry = ttk.Entry(form_frame)
+
+                port_label = ttk.Label(form_frame, text="Port:")
+
                 sender_name_label = ttk.Label(form_frame, text="Sender Name:")
-                sender_name_label.grid(row=0, column=0, padx=5, pady=5)
+                sender_name_label.grid(row=3, column=0, padx=5, pady=5)
                 sender_name_entry = ttk.Entry(form_frame)
-                sender_name_entry.grid(row=0, column=1, padx=5, pady=5)
+                sender_name_entry.grid(row=3, column=1, padx=5, pady=5)
 
                 username_label = ttk.Label(form_frame, text="Email:")
-                username_label.grid(row=1, column=0, padx=5, pady=5)
+                username_label.grid(row=4, column=0, padx=5, pady=5)
                 username_entry = ttk.Entry(form_frame)
-                username_entry.grid(row=1, column=1, padx=5, pady=5)
+                username_entry.grid(row=4, column=1, padx=5, pady=5)
 
                 password_label = ttk.Label(form_frame, text="Password:")
-                password_label.grid(row=2, column=0, padx=5, pady=5)
+                password_label.grid(row=5, column=0, padx=5, pady=5)
                 password_entry = ttk.Entry(form_frame, show="*")
-                password_entry.grid(row=2, column=1, padx=5, pady=5)
+                password_entry.grid(row=5, column=1, padx=5, pady=5)
 
                 show_password_var = tk.BooleanVar()
                 show_password_checkbox = ttk.Checkbutton(form_frame, text="Show Password", variable=show_password_var, command=toggle_password_visibility)
-                show_password_checkbox.grid(row=2, column=2, padx=5, pady=5)
+                show_password_checkbox.grid(row=5, column=2, padx=5, pady=5)
 
                 to_email_label = ttk.Label(form_frame, text="To Email(s):")
-                to_email_label.grid(row=3, column=0, padx=5, pady=5)
+                to_email_label.grid(row=6, column=0, padx=5, pady=5)
                 to_email_entry = ttk.Entry(form_frame)
-                to_email_entry.grid(row=3, column=1, padx=5, pady=5)
+                to_email_entry.grid(row=6, column=1, padx=5, pady=5)
 
                 subject_label = ttk.Label(form_frame, text="Subject:")
-                subject_label.grid(row=4, column=0, padx=5, pady=5)
+                subject_label.grid(row=7, column=0, padx=5, pady=5)
                 subject_entry = ttk.Entry(form_frame)
-                subject_entry.grid(row=4, column=1, padx=5, pady=5)
+                subject_entry.grid(row=7, column=1, padx=5, pady=5)
 
                 body_label = ttk.Label(form_frame, text="Body:")
-                body_label.grid(row=5, column=0, padx=5, pady=5)
+                body_label.grid(row=8, column=0, padx=5, pady=5)
                 body_entry = tk.Text(form_frame, height=10, width=40)
-                body_entry.grid(row=5, column=1, padx=5, pady=5, sticky='ew')
+                body_entry.grid(row=8, column=1, padx=5, pady=5, sticky='ew')
 
                 submit_button = ttk.Button(button_frame, text="Send Email", command=submit_form)
                 submit_button.pack(side=tk.LEFT, padx=5, pady=5, expand=True)
