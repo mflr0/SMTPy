@@ -117,7 +117,7 @@ def submit_form(args=None):
             messagebox.showerror("Error", error_message)
 
 def load_credentials():
-    global saved_server, saved_port, saved_username, saved_password, server_entry, port_entry, username_entry, password_entry
+    global saved_server, saved_port, saved_username, saved_password, server_entry, port_entry, username_entry, password_entry, server_combo
     if os.path.exists('.env'):
         with open('.env', 'r') as f:
             lines = f.readlines()
@@ -126,19 +126,30 @@ def load_credentials():
                 if key == 'SERVER':
                     saved_server = value
                     if GUI_MODE:
+                        server_entry.delete(0, tk.END)  # Effacer le contenu actuel
                         server_entry.insert(0, value)
                 elif key == 'PORT':
                     saved_port = int(value)
                     if GUI_MODE:
+                        port_entry.delete(0, tk.END)  # Effacer le contenu actuel
                         port_entry.insert(0, value)
                 elif key == 'EMAIL':
                     saved_username = value
                     if GUI_MODE:
+                        username_entry.delete(0, tk.END)  # Effacer le contenu actuel
                         username_entry.insert(0, value)
                 elif key == 'PASSWORD':
                     saved_password = value
                     if GUI_MODE:
+                        password_entry.delete(0, tk.END)  # Effacer le contenu actuel
                         password_entry.insert(0, value)
+    if GUI_MODE:
+            if saved_server and saved_port and saved_username and saved_password:
+                save_credentials_var.set(1)
+
+    if GUI_MODE and saved_server:
+        server_combo.set("Custom")
+        on_server_selected(None)
 
 def on_closing():
     if not save_credentials_var.get() and os.path.exists('.env'):
@@ -179,6 +190,9 @@ def on_server_selected(event):
         server_entry.grid(row=1, column=1, padx=5, pady=5)
         port_label.grid(row=2, column=0, padx=5, pady=5)
         port_entry.grid(row=2, column=1, padx=5, pady=5)
+        if saved_server and saved_port and not server_entry.get() and not port_entry.get():
+            server_entry.insert(0, saved_server)
+            port_entry.insert(0, saved_port)
     else:
         server_label.grid_remove()
         server_entry.grid_remove()
@@ -186,7 +200,9 @@ def on_server_selected(event):
         port_entry.grid_remove()
         server = SERVER_PORT_MAPPING[server_combo.get()]["server"]
         port = SERVER_PORT_MAPPING[server_combo.get()]["port"]
+        server_entry.delete(0, tk.END)
         server_entry.insert(0, server)
+        port_entry.delete(0, tk.END)
         port_entry.insert(0, port)
 
 SERVER_PORT_MAPPING = {
