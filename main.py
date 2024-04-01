@@ -25,6 +25,8 @@ try:
 except ImportError:
     GUI_MODE = False
 
+saved_server = None
+saved_port = None
 saved_username = None
 saved_password = None
 
@@ -216,7 +218,6 @@ if __name__ == "__main__":
                 button_frame = ttk.Frame(root, padding=(0, 10))
                 button_frame.grid(row=1, column=0, sticky='ew')
 
-                server_label = ttk.Label(form_frame, text="Server:")
                 server_label = ttk.Label(form_frame, text="Server:")
                 server_label.grid(row=0, column=0, padx=5, pady=5)
                 server_combo = ttk.Combobox(form_frame, values=list(SERVER_PORT_MAPPING.keys()) + ["Custom"], state="readonly")
