@@ -14,6 +14,7 @@ import json
 import os
 import markdown
 import re
+import time
 import tkinter.filedialog as filedialog
 
 try:
@@ -30,7 +31,7 @@ saved_port = None
 saved_username = None
 saved_password = None
 
-def send_mail(server, port, username, password, sender_name, to_emails, cc_emails, subject, body):
+def send_mail(server, port, username, password, sender_name, to_emails, cc_emails, subject, body, delay):
     try:
         server = smtplib.SMTP(server, port)
         server.starttls()
@@ -47,6 +48,7 @@ def send_mail(server, port, username, password, sender_name, to_emails, cc_email
             msg.attach(MIMEText(html_body, 'html'))
 
             server.sendmail(username, email, msg.as_string())
+            time.sleep(delay)  # Ajoutez une pause ici
 
         server.quit()
     except smtplib.SMTPAuthenticationError:
@@ -101,7 +103,8 @@ def submit_form(args=None):
         return
 
     try:
-        send_mail(server, port, username, password, sender_name, to_emails, cc_emails, subject, body)
+        delay = int(delay_entry.get())
+        send_mail(server, port, username, password, sender_name, to_emails, cc_emails, subject, body, delay)
         success_message = "Email sent successfully"
         if args.cli:
             print(success_message)
@@ -268,6 +271,11 @@ if __name__ == "__main__":
                 to_email_label.grid(row=6, column=0, padx=5, pady=5)
                 to_email_entry = ttk.Entry(form_frame)
                 to_email_entry.grid(row=6, column=1, padx=5, pady=5)
+
+                delay_label = ttk.Label(form_frame, text="Delay between emails (seconds):")
+                delay_label.grid(row=9, column=0, padx=5, pady=5)
+                delay_entry = ttk.Entry(form_frame)
+                delay_entry.grid(row=9, column=1, padx=5, pady=5)
 
                 subject_label = ttk.Label(form_frame, text="Subject:")
                 subject_label.grid(row=7, column=0, padx=5, pady=5)
