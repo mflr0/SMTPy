@@ -3,3 +3,6 @@
 .idea
 
 mails.txt
+
+dist/
+builds/
