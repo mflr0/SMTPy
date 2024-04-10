@@ -15,6 +15,8 @@ import os
 import markdown
 import re
 import time
+import csv
+import re
 import tkinter.filedialog as filedialog
 
 try:
@@ -171,13 +173,23 @@ def toggle_password_visibility():
         password_entry.config(show="")
 
 def load_email_list():
-    email_list_file = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
+    email_list_file = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("CSV files", "*.csv")])
     if email_list_file:
-        with open(email_list_file, 'r') as f:
-            lines = f.readlines()
-            emails = [email.strip() for line in lines for email in line.split(',')]
-            to_email_entry.delete(0, tk.END)
-            to_email_entry.insert(0, ', '.join(emails))
+        emails = []
+        if email_list_file.endswith('.csv'):
+            with open(email_list_file, 'r') as f:
+                reader = csv.reader(f)
+                for row in reader:
+                    emails.extend([email.strip() for email in row if email.strip()])
+        else:
+            with open(email_list_file, 'r') as f:
+                lines = f.readlines()
+                for line in lines:
+                    if line.strip():  # Check if line is not empty
+                        emails.extend([email.strip() for email in re.split(',|;', line) if email.strip()])
+
+        to_email_entry.delete(0, tk.END)
+        to_email_entry.insert(0, ', '.join(emails))
 
 def load_file_content():
     file_path = filedialog.askopenfilename(filetypes=[("HTML files", "*.html"), ("Text files", "*.txt"), ("Markdown files", "*.md")])
