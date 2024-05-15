@@ -17,9 +17,11 @@ SNMPy is a Python-based email sending tool that allows you to send emails using 
 ## Installation
 
 To install the required dependencies, run the following command:
+
 ```
 pip install -r requirements.txt
 ```
+
 This will install the required packages such as `smtplib`, `tkinter`, `ttkthemes`, `markdown`, and `argparse`.
 
 ## Usage
@@ -27,17 +29,21 @@ This will install the required packages such as `smtplib`, `tkinter`, `ttkthemes
 ### CLI Mode
 
 To run the program in CLI mode, open a terminal and navigate to the directory where the `main.py` file is located. Then, run the following command:
+
 ```css
 python main.py -cli
 ```
+
 The program will prompt you to enter the email server, port, email address, password, sender name, recipient email addresses, subject, and email body.
 
 ### GUI Mode
 
 To run the program in GUI mode, double-click on the `main.py` file or run the following command in a terminal:
+
 ```bash
 python main.py
 ```
+
 The program will open a window where you can enter the email server, port, email address, password, sender name, recipient email addresses, subject, and email body. You can also choose to save your credentials for future use, load an email list from a file, and load email content from a file.
 
 ## Email Server and Port
