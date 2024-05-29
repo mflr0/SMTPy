@@ -42,10 +42,15 @@ smpty_port = "9900"
 def save_mail(email: str, email_id: int):
     new_mail = {
         "id": email_id,
-        "timestamp": str(datetime.now().timestamp()),
+        "timestamp": str(datetime.datetime.now().timestamp()),
     }
     email_user = email.split('@')[0]
-    sent_emails[email_user].append(new_mail)
+    if sent_emails.keys().__contains__(email_user) is False:
+        sent_emails[email_user] = [new_mail]
+    else:
+        cur_list: list = send_mail[email_user]
+        cur_list.append(new_mail)
+        sent_emails[email_user] = cur_list
     saving_file = open(SENTMAILS, "w")
     saving_file.write(json.dumps(sent_emails))
     saving_file.close()
@@ -265,7 +270,7 @@ open_file = open(SENTMAILS, "r")
 if open_file is False:
     print("Couldn't load sent.json")
     exit(1)
-savefile: dict = json.loads(open_file.read())
+sent_emails: dict = json.loads(open_file.read())
 open_file.close()
 random.seed(datetime.datetime.now().timestamp())
 
