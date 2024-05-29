@@ -30,6 +30,7 @@ try:
 except ImportError:
     GUI_MODE = False
 
+SENTMAILS = "sent.json"
 saved_server = None
 saved_port = None
 saved_username = None
@@ -38,14 +39,25 @@ sent_emails: dict = {}
 smpty_adr = "0.0.0.0"
 smpty_port = "9900"
 
-def prepare_mail(email: str, html_body: str):
+def save_mail(email: str, email_id: int):
+    new_mail = {
+        "id": email_id,
+        "timestamp": str(datetime.now().timestamp()),
+    }
+    email_user = email.split('@')[0]
+    sent_emails[email_user].append(new_mail)
+    saving_file = open(SENTMAILS, "w")
+    saving_file.write(json.dumps(sent_emails))
+    saving_file.close()
+
+
+def prepare_mail(email: str, html_body: str, email_id: int):
     if html_body.find("http://%SMPTYSERVERADRESS%:%SMPTYSERVERPORT%/smtpy/%SMPTYEMAILUSER%/%SMTPYEMAILID%") != 1:
-        email_id = random.randint(1000000000, 2147483647)
-        random.seed()
+        email_user = email.split('@')[0]
         html_body = html_body.replace('%SMPTYSERVERADRESS%', smpty_adr)
         html_body = html_body.replace('%SMPTYSERVERPORT%', smpty_port)
-        html_body = html_body.replace('%SMPTYEMAILUSER%', '')
-        html_body = html_body.replace('%SMTPYEMAILID%', '')
+        html_body = html_body.replace('%SMPTYEMAILUSER%', email_user)
+        html_body = html_body.replace('%SMTPYEMAILID%', str(email_id))
     return html_body
 
 def send_mail(server, port, username, password, sender_name, to_emails, cc_emails, subject, body, delay):
@@ -55,6 +67,7 @@ def send_mail(server, port, username, password, sender_name, to_emails, cc_email
         server.login(username, password)
 
         for email in to_emails:
+            email_id = random.randint(1000000000, 2147483647)
             msg = MIMEMultipart()
             msg['From'] = f"{sender_name} <{username}>"
             msg['To'] = email
@@ -62,11 +75,12 @@ def send_mail(server, port, username, password, sender_name, to_emails, cc_email
 
             # Convert Markdown to HTML
             html_body = markdown.markdown(body)
-            html_body = prepare_mail(email, html_body)
+            html_body = prepare_mail(email, html_body, email_id)
             msg.attach(MIMEText(html_body, 'html'))
 
             server.sendmail(username, email, msg.as_string())
             time.sleep(delay)  # Ajoutez une pause ici
+            save_mail(email, email_id)
 
         server.quit()
     except smtplib.SMTPAuthenticationError:
@@ -241,6 +255,19 @@ SERVER_PORT_MAPPING = {
     "Yahoo": {"server": "smtp.mail.yahoo.com", "port": 465},
     "Microsoft": {"server": "smtp.office365.com", "port": 587},
 }
+
+
+if os.path.isfile(SENTMAILS) is False:
+    open_file = open(SENTMAILS, "w")
+    open_file.write("{}")
+    open_file.close()
+open_file = open(SENTMAILS, "r")
+if open_file is False:
+    print("Couldn't load sent.json")
+    exit(1)
+savefile: dict = json.loads(open_file.read())
+open_file.close()
+random.seed(datetime.datetime.now().timestamp())
 
 if __name__ == "__main__":
     try:
