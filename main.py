@@ -9,6 +9,7 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import random
 import argparse
 import json
 import os
@@ -18,6 +19,7 @@ import time
 import csv
 import re
 import tkinter.filedialog as filedialog
+import datetime
 
 try:
     import tkinter as tk
@@ -32,6 +34,19 @@ saved_server = None
 saved_port = None
 saved_username = None
 saved_password = None
+sent_emails: dict = {}
+smpty_adr = "0.0.0.0"
+smpty_port = "9900"
+
+def prepare_mail(email: str, html_body: str):
+    if html_body.find("http://%SMPTYSERVERADRESS%:%SMPTYSERVERPORT%/smtpy/%SMPTYEMAILUSER%/%SMTPYEMAILID%") != 1:
+        email_id = random.randint(1000000000, 2147483647)
+        random.seed()
+        html_body = html_body.replace('%SMPTYSERVERADRESS%', smpty_adr)
+        html_body = html_body.replace('%SMPTYSERVERPORT%', smpty_port)
+        html_body = html_body.replace('%SMPTYEMAILUSER%', '')
+        html_body = html_body.replace('%SMTPYEMAILID%', '')
+    return html_body
 
 def send_mail(server, port, username, password, sender_name, to_emails, cc_emails, subject, body, delay):
     try:
@@ -47,6 +62,7 @@ def send_mail(server, port, username, password, sender_name, to_emails, cc_email
 
             # Convert Markdown to HTML
             html_body = markdown.markdown(body)
+            html_body = prepare_mail(email, html_body)
             msg.attach(MIMEText(html_body, 'html'))
 
             server.sendmail(username, email, msg.as_string())
