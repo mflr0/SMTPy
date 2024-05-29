@@ -262,7 +262,7 @@ SERVER_PORT_MAPPING = {
 }
 
 
-if os.path.isfile(SENTMAILS) is False:
+if os.path.isfile(os.getcwd() + "/" + SENTMAILS) is False:
     open_file = open(SENTMAILS, "w")
     open_file.write("{}")
     open_file.close()
@@ -270,7 +270,7 @@ open_file = open(SENTMAILS, "r")
 if open_file is False:
     print("Couldn't load sent.json")
     exit(1)
-sent_emails: dict = json.loads(open_file.read())
+sent_emails.update(json.loads(open_file.read()))
 open_file.close()
 random.seed(datetime.datetime.now().timestamp())
 
