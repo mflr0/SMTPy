@@ -7,7 +7,7 @@
 ##
 
 import json
-from flask import Flask, jsonify
+from flask import Flask, redirect
 import os.path
 
 app = Flask(__name__)
@@ -19,12 +19,12 @@ SENTMAILS = "sent.json"
 @app.route('/smtpy/<string:user>/<int:id>', methods=['GET'])
 def register_phish(user: str, id: int):
     if os.path.isfile(SENTMAILS) is False:
-        return '', 500
+        return redirect("http://www.google.fr", code=500)
     sent_file = open(SENTMAILS, "r")
     sent_text = sent_file.read()
 
     if sent_text.find(user) == -1 or sent_text.find(str(id)) == -1 or id > 2147483647 or id < 1000000000 or json.dumps(savefile).find(str(id)) != -1:
-        return '', 400
+        return redirect("http://www.google.fr", code=400)
     sent_file.close()
 
     if savefile.keys().__contains__(user) is False:
@@ -37,17 +37,18 @@ def register_phish(user: str, id: int):
     saving_file = open(SAVENAME, "w")
     saving_file.write(json.dumps(savefile))
     saving_file.close()
-    return '', 200
+    return redirect("http://www.google.fr", code=302)
 
 def load_save():
-    if os.path.isfile(SAVENAME) is False:
+    if os.path.isfile(os.getcwd() + "/" + SAVENAME) is False:
+        print(os.getcwd())
         open_file = open(SAVENAME, "w")
         open_file.write("{}")
         open_file.close()
     open_file = open(SAVENAME, "r")
     if open_file is False:
         return False
-    savefile: dict = json.loads(open_file.read())
+    savefile.update(json.loads(open_file.read()))
     open_file.close()
     return True
 
