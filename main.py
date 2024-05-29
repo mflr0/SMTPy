@@ -36,7 +36,7 @@ saved_port = None
 saved_username = None
 saved_password = None
 sent_emails: dict = {}
-smpty_adr = "0.0.0.0"
+smpty_adr = "127.0.0.1"
 smpty_port = "9900"
 
 def save_mail(email: str, email_id: int):
@@ -48,7 +48,7 @@ def save_mail(email: str, email_id: int):
     if sent_emails.keys().__contains__(email_user) is False:
         sent_emails[email_user] = [new_mail]
     else:
-        cur_list: list = send_mail[email_user]
+        cur_list: list = sent_emails[email_user]
         cur_list.append(new_mail)
         sent_emails[email_user] = cur_list
     saving_file = open(SENTMAILS, "w")
