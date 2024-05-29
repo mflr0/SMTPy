@@ -46,6 +46,10 @@ python main.py
 
 The program will open a window where you can enter the email server, port, email address, password, sender name, recipient email addresses, subject, and email body. You can also choose to save your credentials for future use, load an email list from a file, and load email content from a file.
 
+### Installation
+
+The minimal size of the project (two .py files) makes it easy to setup and run as anything you need. Dockerize it, make it a webapp on the cloud, run it on your own machine. As long as the two scripts are on the same folder, they can be installed as anything anywhere once Python and the requirements are installed.
+
 ## Email Server and Port
 
 By default, the program supports the following email providers:
@@ -71,6 +75,24 @@ You can load email content from an HTML, Markdown, or plain text file. To do thi
 ## Customizable Delay
 
 You can customize the delay between sending emails by entering a value in the "Delay between emails (seconds)" field. This can be useful if you are sending a large number of emails and want to avoid being flagged as spam.
+
+## Stored Data
+
+The data stored by the e-mail generator is saved under the ``sent.json`` file. This file contains the usernames (beginning of e-mail address before the @) and the ID and timestamp of all e-mails sent to them through the program.
+
+The server stores its data in the ``savedata.json`` file, which is used to pair users with the e-mail IDs they clicked on. Nothing else is saved.
+
+## API
+
+The API of the ``server.py`` script only has a single endpoint that is referenced in all sent mails that use official ReEnforced templates. The link in those e-mails contains a part of the target's e-mail address and the unique ID that was assigned to that mail. When called, the API checks that the user was sent e-mails by the client in the past, and that the ID is valid, at which point it is attached to the user.
+
+This is essentially gaining one "point". The amount of successful phishing attacks egals the amount of IDs attached to a particular user.
+
+The API and script both default to the ``127.0.0.1`` address and ``9900`` port. These can easily be changed within the scripts to whatever suits your needs.
+
+## Formations
+
+Formations are hand-crafted from either templates given by the client company or the findings of what worked on certain employees multiple times. We can check exactly which emails were responsible for an increase in score thanks to their attached timestamp, which lets us filter which e-mail is responsible for it.
 
 ## Conclusion
 
