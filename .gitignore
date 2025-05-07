@@ -6,3 +6,5 @@ mails.txt
 
 dist/
 builds/
+
+__pycache__/
