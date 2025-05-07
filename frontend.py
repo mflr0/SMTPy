@@ -124,13 +124,50 @@ app.layout = html.Div([
         'backgroundColor': '#222',
         'fontFamily': 'Arial, sans-serif',
         'boxSizing': 'border-box'  # Prevent overflow
+    }),
+    html.Footer([
+        html.Div([
+            html.A([
+                html.Img(src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png", 
+                         style={'width': '20px', 'verticalAlign': 'middle', 'marginRight': '10px'})
+            ], href="https://github.com/0xGuigui/SMTPy", target="_blank"),
+            html.A([
+                html.Img(src="https://cdn-icons-png.flaticon.com/512/174/174857.png", 
+                         style={'width': '20px', 'verticalAlign': 'middle'})
+            ], href="https://www.linkedin.com/in/0xguigui", target="_blank")
+        ], style={
+            'display': 'flex',
+            'alignItems': 'center',
+            'gap': '10px',
+            'justifyContent': 'flex-start',
+            'width': '33%'
+        }),
+        html.Div("Developed by 0xGuigui", style={
+            'textAlign': 'center',
+            'fontFamily': 'Arial, sans-serif',
+            'color': '#ffffff',
+            'width': '33%'
+        }),
+        html.Div(style={'width': '33%'})  # Empty div for spacing
+    ], style={
+        'position': 'relative',
+        'width': '100%',
+        'backgroundColor': '#222',
+        'color': '#ffffff',
+        'display': 'flex',
+        'justifyContent': 'space-between',
+        'alignItems': 'center',
+        'padding': '10px 20px',
+        'boxShadow': '0 -2px 5px rgba(0, 0, 0, 0.2)',
+        'marginTop': 'auto'  # Push footer to the bottom of the page
     })
 ], style={
     'backgroundColor': '#121212',
     'minHeight': '100vh',
     'display': 'flex',
+    'flexDirection': 'column',
     'alignItems': 'center',
-    'justifyContent': 'center',
+    'justifyContent': 'flex-start',  # Allow content to stack above the footer
     'backgroundImage': 'url("https://www.transparenttextures.com/patterns/stardust.png")',
     'backgroundSize': 'cover',
     'margin': '0',  # Remove any default margin
