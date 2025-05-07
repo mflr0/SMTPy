@@ -130,11 +130,11 @@ app.layout = html.Div([
             html.A([
                 html.Img(src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png", 
                          style={'width': '20px', 'verticalAlign': 'middle', 'marginRight': '10px'})
-            ], href="https://github.com/0xGuigui/SMTPy", target="_blank"),
+            ], href="https://github.com/0xGuigui/SMTPy", target="_blank", style={'marginLeft': '10px'}),  # Shifted right
             html.A([
                 html.Img(src="https://cdn-icons-png.flaticon.com/512/174/174857.png", 
                          style={'width': '20px', 'verticalAlign': 'middle'})
-            ], href="https://www.linkedin.com/in/0xguigui", target="_blank")
+            ], href="https://www.linkedin.com/in/0xguigui", target="_blank", style={'marginLeft': '10px'})  # Shifted right
         ], style={
             'display': 'flex',
             'alignItems': 'center',
