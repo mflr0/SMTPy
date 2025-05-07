@@ -9,84 +9,93 @@ app.layout = html.Div([
         html.H2("🌟 Envoyer un email 🌟", style={
             'textAlign': 'center',
             'color': '#ffffff',
-            'fontFamily': 'Arial, sans-serif'
+            'fontFamily': 'Arial, sans-serif',
+            'margin': '0'  # Ensure no extra margin
         }),
         dcc.Input(id='server', type='text', placeholder='🌐 SMTP server', value='smtp.example.com', style={
-            'margin': '10px 0',
+            'margin': '10px auto',  # Centered and consistent margin
             'padding': '10px',
             'border': '1px solid #555',
             'borderRadius': '5px',
-            'width': 'calc(100% - 20px)',  # Added padding to prevent touching edges
+            'width': '100%',
             'backgroundColor': '#333',
-            'color': '#fff'
+            'color': '#fff',
+            'boxSizing': 'border-box'  # Prevent overflow
         }),
         dcc.Input(id='port', type='number', placeholder='🔌 Port', value=587, style={
-            'margin': '10px 0',
+            'margin': '10px auto',
             'padding': '10px',
             'border': '1px solid #555',
             'borderRadius': '5px',
-            'width': 'calc(100% - 20px)',  # Added padding to prevent touching edges
+            'width': '100%',
             'backgroundColor': '#333',
-            'color': '#fff'
+            'color': '#fff',
+            'boxSizing': 'border-box'
         }),
         dcc.Input(id='username', type='text', placeholder='👤 Username', style={
-            'margin': '10px 0',
+            'margin': '10px auto',
             'padding': '10px',
             'border': '1px solid #555',
             'borderRadius': '5px',
-            'width': 'calc(100% - 20px)',  # Added padding to prevent touching edges
+            'width': '100%',
             'backgroundColor': '#333',
-            'color': '#fff'
+            'color': '#fff',
+            'boxSizing': 'border-box'
         }),
         dcc.Input(id='password', type='password', placeholder='🔒 Password', style={
-            'margin': '10px 0',
+            'margin': '10px auto',
             'padding': '10px',
             'border': '1px solid #555',
             'borderRadius': '5px',
-            'width': 'calc(100% - 20px)',  # Added padding to prevent touching edges
+            'width': '100%',
             'backgroundColor': '#333',
-            'color': '#fff'
+            'color': '#fff',
+            'boxSizing': 'border-box'
         }),
         dcc.Input(id='sender', type='text', placeholder='📧 From address', style={
-            'margin': '10px 0',
+            'margin': '10px auto',
             'padding': '10px',
             'border': '1px solid #555',
             'borderRadius': '5px',
-            'width': 'calc(100% - 20px)',  # Added padding to prevent touching edges
+            'width': '100%',
             'backgroundColor': '#333',
-            'color': '#fff'
+            'color': '#fff',
+            'boxSizing': 'border-box'
         }),
         dcc.Textarea(id='recipients', placeholder='📜 Destinataires (virgule séparés)', style={
-            'margin': '10px 0',
+            'margin': '10px auto',
             'padding': '10px',
             'border': '1px solid #555',
             'borderRadius': '5px',
-            'width': 'calc(100% - 20px)',  # Added padding to prevent touching edges
+            'width': '100%',
             'height': '80px',
             'backgroundColor': '#333',
-            'color': '#fff'
+            'color': '#fff',
+            'boxSizing': 'border-box'
         }),
         dcc.Input(id='subject', type='text', placeholder='✉️ Sujet', style={
-            'margin': '10px 0',
+            'margin': '10px auto',
             'padding': '10px',
             'border': '1px solid #555',
             'borderRadius': '5px',
-            'width': 'calc(100% - 20px)',  # Added padding to prevent touching edges
+            'width': '100%',
             'backgroundColor': '#333',
-            'color': '#fff'
+            'color': '#fff',
+            'boxSizing': 'border-box'
         }),
         dcc.Textarea(id='body', placeholder='📝 Corps du message (HTML ok)', style={
-            'margin': '10px 0',
+            'margin': '10px auto',
             'padding': '10px',
             'border': '1px solid #555',
             'borderRadius': '5px',
-            'width': 'calc(100% - 20px)',  # Added padding to prevent touching edges
+            'width': '100%',
             'height': '120px',
             'backgroundColor': '#333',
-            'color': '#fff'
+            'color': '#fff',
+            'boxSizing': 'border-box'
         }),
         html.Button('🚀 Envoyer', id='send-btn', style={
-            'margin': '10px 0',
+            'margin': '10px auto',
             'backgroundColor': '#007BFF',
             'color': 'white',
             'border': 'none',
@@ -94,7 +103,8 @@ app.layout = html.Div([
             'cursor': 'pointer',
             'borderRadius': '5px',
             'fontSize': '16px',
-            'width': 'calc(100% - 20px)'  # Added padding to prevent touching edges
+            'width': '100%',
+            'boxSizing': 'border-box'
         },
         n_clicks=0),
         html.Div(id='status', style={
@@ -112,7 +122,8 @@ app.layout = html.Div([
         'borderRadius': '10px',
         'boxShadow': '0 4px 8px rgba(0, 0, 0, 0.2)',
         'backgroundColor': '#222',
-        'fontFamily': 'Arial, sans-serif'
+        'fontFamily': 'Arial, sans-serif',
+        'boxSizing': 'border-box'  # Prevent overflow
     })
 ], style={
     'backgroundColor': '#121212',
@@ -121,7 +132,10 @@ app.layout = html.Div([
     'alignItems': 'center',
     'justifyContent': 'center',
     'backgroundImage': 'url("https://www.transparenttextures.com/patterns/stardust.png")',
-    'backgroundSize': 'cover'
+    'backgroundSize': 'cover',
+    'margin': '0',  # Remove any default margin
+    'padding': '0',  # Remove any default padding
+    'boxSizing': 'border-box'  # Prevent overflow
 })
 
 @app.callback(
