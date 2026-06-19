@@ -2,8 +2,8 @@
 ##  main.py
 ##  SNMPy
 ##
-##  Created by 0xGuigui on 13/03/2024.
-##  Contributor(s): 0xGuigui
+##  Created by mflr0 on 13/03/2024.
+##  Contributor(s): mflr0
 ##
 
 import smtplib
